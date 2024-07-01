@@ -1,0 +1,244 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Employee {
+  createdAt          DateTime            @default(now())
+  department         Department?         @relation(fields: [departmentId], references: [id])
+  departmentId       String?
+  email              String?
+  endDate            DateTime?
+  firstName          String?
+  id                 String              @id @default(cuid())
+  lastName           String?
+  leaveRequests      LeaveRequest[]
+  performanceMetrics PerformanceMetric[]
+  phoneNumber        String?
+  position           String?
+  startDate          DateTime?
+  status             EnumEmployeeStatus?
+  updatedAt          DateTime            @updatedAt
+}
+
+model Department {
+  createdAt   DateTime     @default(now())
+  description String?
+  employees   Employee[]
+  id          String       @id @default(cuid())
+  jobPostings JobPosting[]
+  name        String?
+  updatedAt   DateTime     @updatedAt
+}
+
+model Admin {
+  createdAt   DateTime               @default(now())
+  email       String?
+  firstName   String?
+  id          String                 @id @default(cuid())
+  lastName    String?
+  permissions EnumAdminPermissions[]
+  role        EnumAdminRole?
+  updatedAt   DateTime               @updatedAt
+}
+
+model Document {
+  createdAt   DateTime               @default(now())
+  description String?
+  file        Json?
+  id          String                 @id @default(cuid())
+  owner       String?
+  title       String?
+  typeField   EnumDocumentTypeField?
+  updatedAt   DateTime               @updatedAt
+  uploadDate  DateTime?
+}
+
+model Interview {
+  applicant   Applicant?           @relation(fields: [applicantId], references: [id])
+  applicantId String?
+  createdAt   DateTime             @default(now())
+  date        DateTime?
+  feedback    String?
+  id          String               @id @default(cuid())
+  interviewer String?
+  status      EnumInterviewStatus?
+  time        DateTime?
+  updatedAt   DateTime             @updatedAt
+}
+
+model Task {
+  assignedTo  String?
+  createdAt   DateTime        @default(now())
+  description String?
+  dueDate     DateTime?
+  id          String          @id @default(cuid())
+  status      EnumTaskStatus?
+  title       String?
+  updatedAt   DateTime        @updatedAt
+}
+
+model Notification {
+  createdAt DateTime                   @default(now())
+  dateSent  DateTime?
+  id        String                     @id @default(cuid())
+  isRead    Boolean?
+  message   String?
+  recipient String?
+  typeField EnumNotificationTypeField?
+  updatedAt DateTime                   @updatedAt
+}
+
+model JobPosting {
+  applicants   Applicant[]
+  closeDate    DateTime?
+  createdAt    DateTime              @default(now())
+  department   Department?           @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  description  String?
+  id           String                @id @default(cuid())
+  postedDate   DateTime?
+  requirements String?
+  status       EnumJobPostingStatus?
+  title        String?
+  updatedAt    DateTime              @updatedAt
+}
+
+model Appointment {
+  createdAt      DateTime                      @default(now())
+  date           DateTime?
+  description    String?
+  id             String                        @id @default(cuid())
+  location       String?
+  outlookEventId String?
+  participants   EnumAppointmentParticipants[]
+  time           DateTime?
+  title          String?
+  updatedAt      DateTime                      @updatedAt
+}
+
+model PerformanceMetric {
+  callsMade      Int?
+  conversionRate Float?
+  createdAt      DateTime                         @default(now())
+  emailsSent     Int?
+  employee       Employee?                        @relation(fields: [employeeId], references: [id])
+  employeeId     String?
+  id             String                           @id @default(cuid())
+  meetingsBooked Int?
+  metricType     EnumPerformanceMetricMetricType?
+  recordedDate   DateTime?
+  updatedAt      DateTime                         @updatedAt
+}
+
+model LeaveRequest {
+  comments   String?
+  createdAt  DateTime                   @default(now())
+  employee   Employee?                  @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  endDate    DateTime?
+  id         String                     @id @default(cuid())
+  manager    String?
+  startDate  DateTime?
+  status     EnumLeaveRequestStatus?
+  typeField  EnumLeaveRequestTypeField?
+  updatedAt  DateTime                   @updatedAt
+}
+
+model Applicant {
+  appliedDate  DateTime?
+  createdAt    DateTime             @default(now())
+  email        String?
+  firstName    String?
+  id           String               @id @default(cuid())
+  interviews   Interview[]
+  jobPosting   JobPosting?          @relation(fields: [jobPostingId], references: [id])
+  jobPostingId String?
+  lastName     String?
+  phoneNumber  String?
+  resume       Json?
+  status       EnumApplicantStatus?
+  updatedAt    DateTime             @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Asset {
+  assetType  String?
+  assignedTo String?
+  condition  String?
+  createdAt  DateTime         @default(now())
+  id         String           @id @default(cuid())
+  status     EnumAssetStatus?
+  updatedAt  DateTime         @updatedAt
+}
+
+enum EnumEmployeeStatus {
+  Option1
+}
+
+enum EnumAdminPermissions {
+  Option1
+}
+
+enum EnumAdminRole {
+  Option1
+}
+
+enum EnumDocumentTypeField {
+  Option1
+}
+
+enum EnumInterviewStatus {
+  Option1
+}
+
+enum EnumTaskStatus {
+  Option1
+}
+
+enum EnumNotificationTypeField {
+  Option1
+}
+
+enum EnumJobPostingStatus {
+  Option1
+}
+
+enum EnumAppointmentParticipants {
+  Option1
+}
+
+enum EnumPerformanceMetricMetricType {
+  Option1
+}
+
+enum EnumLeaveRequestStatus {
+  Option1
+}
+
+enum EnumLeaveRequestTypeField {
+  Option1
+}
+
+enum EnumApplicantStatus {
+  Option1
+}
+
+enum EnumAssetStatus {
+  Option1
+}
